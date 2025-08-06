@@ -1,38 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import EditSaleModal from './EditSaleModal'; // make sure this file exists in components
-
-import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import React, { useState } from 'react';
 import EditSaleModal from './EditSaleModal';
 
-const SalesTable = ({ selectedDate }) => {
-  const [sales, setSales] = useState([]);
-  const [editSale, setEditSale] = useState(null);
+const SalesTable = () => {
+  const [sales, setSales] = useState([
+    {
+      id: '1',
+      date: '2025-08-06',
+      fuelType: 'Petrol',
+      litres: 20,
+      amount: 2000,
+      creditCustomer: '',
+      dueDate: '',
+    },
+    {
+      id: '2',
+      date: '2025-08-06',
+      fuelType: 'Diesel',
+      litres: 15,
+      amount: 1500,
+      creditCustomer: 'ABC Corp',
+      dueDate: '2025-08-10',
+    },
+  ]);
 
-  useEffect(() => {
-    const fetchSales = async () => {
-      const salesRef = collection(db, 'sales');
-      const q = query(salesRef); // Add filters here later
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSales(data);
-    };
-    fetchSales();
-  }, [selectedDate]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState(null);
 
-  const handleDelete = async (id) => {
-    await deleteDoc(doc(db, 'sales', id));
-    setSales(sales.filter(sale => sale.id !== id));
+  const handleSaleUpdate = (updatedSale) => {
+    setSales((prevSales) =>
+      prevSales.map((sale) =>
+        sale.id === updatedSale.id ? updatedSale : sale
+      )
+    );
+    setIsEditModalOpen(false);
   };
 
   return (
     <div>
-      <h3>Sales</h3>
-      <table>
+      <h2>Sales Table</h2>
+      <table border="1" cellPadding="8">
         <thead>
           <tr>
-            <th>Date</th><th>Fuel</th><th>Qty</th><th>Rate</th><th>Total</th><th>Credit</th><th>Actions</th>
+            <th>Date</th>
+            <th>Fuel Type</th>
+            <th>Litres</th>
+            <th>Amount</th>
+            <th>Credit Customer</th>
+            <th>Due Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -40,19 +55,32 @@ const SalesTable = ({ selectedDate }) => {
             <tr key={sale.id}>
               <td>{sale.date}</td>
               <td>{sale.fuelType}</td>
-              <td>{sale.quantity}</td>
-              <td>₹{sale.rate}</td>
-              <td>₹{sale.totalAmount}</td>
-              <td>{sale.isCredit ? 'Yes' : 'No'}</td>
+              <td>{sale.litres}</td>
+              <td>{sale.amount}</td>
+              <td>{sale.creditCustomer || '-'}</td>
+              <td>{sale.dueDate || '-'}</td>
               <td>
-                <button onClick={() => setEditSale(sale)}>Edit</button>
-                <button onClick={() => handleDelete(sale.id)}>Delete</button>
+                <button
+                  onClick={() => {
+                    setSelectedSale(sale);
+                    setIsEditModalOpen(true);
+                  }}
+                >
+                  Edit
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {editSale && <EditSaleModal sale={editSale} onClose={() => setEditSale(null)} />}
+
+      {isEditModalOpen && selectedSale && (
+        <EditSaleModal
+          sale={selectedSale}
+          onClose={() => setIsEditModalOpen(false)}
+          onUpdate={handleSaleUpdate}
+        />
+      )}
     </div>
   );
 };
