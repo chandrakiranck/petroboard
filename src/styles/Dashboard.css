@@ -1,0 +1,37 @@
+.dashboard-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-title {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.cards-row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  background-color: #f0f0f0;
+  border-left: 5px solid #007bff;
+  padding: 1.2rem;
+  border-radius: 6px;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.dashboard-card h4 {
+  margin-bottom: 0.5rem;
+}
+
+.inventory-section {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
