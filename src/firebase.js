@@ -1,9 +1,9 @@
-// Import Firebase modules
+// Import the functions you need from the Firebase SDKs
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Your Firebase config
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDtibkYYC9TNqBQYmats1G5Qk51z17AKZQ",
   authDomain: "petroboard-b787b.firebaseapp.com",
@@ -18,5 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Export Firestore and Auth
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+export { db, auth };
