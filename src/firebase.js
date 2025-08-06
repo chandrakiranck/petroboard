@@ -1,6 +1,9 @@
+// Import Firebase modules
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDtibkYYC9TNqBQYmats1G5Qk51z17AKZQ",
   authDomain: "petroboard-b787b.firebaseapp.com",
@@ -11,7 +14,9 @@ const firebaseConfig = {
   measurementId: "G-GL9545T42M"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-export { db };
+// Export Firestore and Auth
+export const db = getFirestore(app);
+export const auth = getAuth(app);
