@@ -1,44 +1,80 @@
 import React, { useState } from 'react';
 import EditSaleModal from './EditSaleModal';
+import './SalesTable.css';
 
-const SalesTable = () => {
-  const [sales, setSales] = useState([
-    {
-      id: '1',
-      date: '2025-08-06',
-      fuelType: 'Petrol',
-      litres: 20,
-      amount: 2000,
+const initialSales = [
+  {
+    id: 1,
+    date: '2025-08-06',
+    fuelType: 'Petrol',
+    litres: 20,
+    amount: 2000,
+    creditCustomer: '',
+    dueDate: '',
+  },
+  {
+    id: 2,
+    date: '2025-08-06',
+    fuelType: 'Diesel',
+    litres: 15,
+    amount: 1500,
+    creditCustomer: 'ABC Corp',
+    dueDate: '2025-08-10',
+  },
+];
+
+export default function SalesTable() {
+  const [sales, setSales] = useState(initialSales);
+  const [editingSale, setEditingSale] = useState(null);
+
+  const handleEdit = (sale) => {
+    setEditingSale(sale);
+  };
+
+  const handleDelete = (id) => {
+    setSales(sales.filter((sale) => sale.id !== id));
+  };
+
+  const handleSave = (updatedSale) => {
+    setSales((prev) =>
+      prev.map((sale) => (sale.id === updatedSale.id ? updatedSale : sale))
+    );
+    setEditingSale(null);
+  };
+
+  const handleAdd = () => {
+    const newSale = {
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      fuelType: '',
+      litres: '',
+      amount: '',
       creditCustomer: '',
       dueDate: '',
-    },
-    {
-      id: '2',
-      date: '2025-08-06',
-      fuelType: 'Diesel',
-      litres: 15,
-      amount: 1500,
-      creditCustomer: 'ABC Corp',
-      dueDate: '2025-08-10',
-    },
-  ]);
-
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedSale, setSelectedSale] = useState(null);
-
-  const handleSaleUpdate = (updatedSale) => {
-    setSales((prevSales) =>
-      prevSales.map((sale) =>
-        sale.id === updatedSale.id ? updatedSale : sale
-      )
-    );
-    setIsEditModalOpen(false);
+    };
+    setSales([...sales, newSale]);
+    setEditingSale(newSale);
   };
 
   return (
-    <div>
-      <h2>Sales Table</h2>
-      <table border="1" cellPadding="8">
+    <div className="sales-container">
+      <div className="header">
+        <img src="/logo192.png" alt="Logo" className="logo" />
+        <h1>PetroBoard Dashboard</h1>
+      </div>
+
+      <div className="tabs">
+        <button className="tab active">Sales</button>
+        <button className="tab">Employees</button>
+        <button className="tab">Inventory</button>
+      </div>
+
+      <div className="sales-header">
+        <h2>Sales Table</h2>
+        <button className="add-btn" onClick={handleAdd}>+ Add Sale</button>
+      </div>
+
+      <table className="sales-table">
         <thead>
           <tr>
             <th>Date</th>
@@ -60,29 +96,17 @@ const SalesTable = () => {
               <td>{sale.creditCustomer || '-'}</td>
               <td>{sale.dueDate || '-'}</td>
               <td>
-                <button
-                  onClick={() => {
-                    setSelectedSale(sale);
-                    setIsEditModalOpen(true);
-                  }}
-                >
-                  Edit
-                </button>
+                <button onClick={() => handleEdit(sale)} className="edit-btn">Edit</button>
+                <button onClick={() => handleDelete(sale.id)} className="delete-btn">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {isEditModalOpen && selectedSale && (
-        <EditSaleModal
-          sale={selectedSale}
-          onClose={() => setIsEditModalOpen(false)}
-          onUpdate={handleSaleUpdate}
-        />
+      {editingSale && (
+        <EditSaleModal sale={editingSale} onSave={handleSave} onCancel={() => setEditingSale(null)} />
       )}
     </div>
   );
-};
-
-export default SalesTable;
+}
